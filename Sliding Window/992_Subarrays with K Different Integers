@@ -25,3 +25,27 @@ public int maxSubarrayNumber(int[] A, int k){
         return answer;
     }
 }
+
+public int maxSubstringNumber(int[] A, int k){
+        int answer = 0;
+        int count[] = new int[26];
+        int start = 0;
+        for(int end = 0; end< A.length; end++){
+            System.out.println(A[end]);
+            if(count[A[end]]++ == 0){
+                //count[A[end]]++;
+                k--;
+            }    
+            while(k<0){
+                //count[A[start]]--;
+                if(--count[A[start++]] == 0){
+                    //start++;
+                    k++;
+                }
+            }
+        answer +=  end - start + 1;
+        }
+        return answer;
+    }
+
+
