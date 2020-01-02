@@ -1,0 +1,165 @@
+//Using BFS + PQ
+class Solution {
+    public int maximumMinimumPath(int[][] A) {
+        int r = A.length;
+        int c = A[0].length;
+        int min = Math.min(A[r-1][c-1],A[0][0]);
+        //int min = A[0][0];
+            
+        PriorityQueue<Unit> pq = new PriorityQueue<>((x1,x2)->x2.val-x1.val);
+        int[][] visited = new int[r][c];
+        int i = 0;
+        int j = 0;
+        //int[][] dirs = {{1,0}, {-1,0}, {0,1}, {0,-1}};  for loop 里记录方向
+        
+        while(i!=r-1 || j!=c-1){
+            visited[i][j] = 1;
+            int cur = A[i][j];
+            
+            //up
+            if(i-1>=0 && visited[i-1][j] == 0){
+                visited[i-1][j] = 1;
+                pq.offer(new Unit(A[i-1][j],i-1,j));
+            }
+            
+            //down
+            if(i+1<r && visited[i+1][j] == 0){
+                if(reach(i+1,j,r,c)) return min;
+                visited[i+1][j] = 1;
+                pq.offer(new Unit(A[i+1][j],i+1,j));
+            }
+            
+            //right
+            if(j+1<c && visited[i][j+1] == 0){
+                if(reach(i,j+1,r,c)) return min;
+                visited[i][j+1] = 1;
+                pq.offer(new Unit(A[i][j+1],i,j+1));
+            }
+            
+            //left
+            if(j-1>=0 && visited[i][j-1] == 0){
+                visited[i][j-1] = 1;
+                pq.offer(new Unit(A[i][j-1],i,j-1));
+            }
+            
+            //pick next step
+            Unit next = pq.poll();
+            if(next.val < min) min = next.val;   
+            i = next.row;
+            j = next.col;
+              
+        }
+        //Can use for loop to replace 4 select blocks
+        
+    /*
+    for(int dir[]: dirs){
+        
+    int x = p.x + dir[0];
+    int y = p.y + dir[1];
+        
+        
+    if(x == rows - 1 && y == cols - 1){
+		// If we reached target then return
+        min = Math.min(min, A[x][y]);
+        return min;
+    }
+        
+    if(x >= 0 && x < rows && y >= 0 && y < cols && visited[x][y] == 0){
+        visited[x][y] = 1;
+        maxHeap.add(new Pair(x, y, A[x][y]));
+       
+    }    
+        
+    }
+        
+   */
+        
+        return min;    
+    }
+    
+    public boolean reach(int i, int j, int r, int c){
+        if(i==r-1&&j==c-1) return true;
+        return false;
+    }
+     
+}
+
+public class Unit{
+    public int val;
+    public int row;
+    public int col;
+    
+    public Unit(int val,int i,int j){
+        this.val = val;
+        this.row = i;
+        this.col = j;
+    }
+}
+
+
+//PRINTS ALL POSSIBLE PATHS
+//PRINT LIST OF PATH SCORES
+//FINDS THE MINIMUM WHILE DOING RECURSION
+//UPDATES A GLOBAL MAX WHILE DOING RECURSION
+
+
+public class Main {
+    /* DRIVER CODE */
+    public static void main(String[] args) {
+        int[][] grid = {{1,2,3,4},{4,5,6,1},{3,4,6,2}};
+        //int[][] grid = {{5,1},{4,5}};
+        int result = getMaxOfMin(grid);
+        System.out.println("paths(not including start & end):");
+        for(ArrayList<Integer> list : Wrapper.paths){
+            System.out.println(list.toString());
+        }
+        System.out.println("mins of every path: "+Wrapper.mins.toString());
+        
+        System.out.println("result: "+result);
+    }
+    /* SOLUTION DOWN HERE */
+    public static class Wrapper{
+        public static ArrayList<ArrayList<Integer>> paths; 
+        public static ArrayList<Integer> mins;
+        public static int max;
+    }
+    public static int getMaxOfMin(int[][] grid){
+        Wrapper.paths = new ArrayList<ArrayList<Integer>>();
+        Wrapper.mins = new ArrayList<Integer>();
+        Wrapper.max = 0;
+        ArrayList<Integer> path = new ArrayList<>();
+        getMins(grid, 0, 1, grid[0][1], path);
+        path.clear();
+        getMins(grid, 1, 0, grid[1][0], path);
+        return Wrapper.max;
+    }
+    public static void getMins(int[][] grid, int r, int c, int min, ArrayList<Integer> path){
+        //check if we have a new min for current brach path
+        int newMin = min;
+        if(grid[r][c] < min){
+            newMin = grid[r][c];
+        } 
+        //Add current value to branch current path 
+        path.add(grid[r][c]);
+        //GO RIGHT
+        if(c+1 < grid[0].length) {
+        	System.out.println("Now Path1 is :" + path);
+            ArrayList<Integer> newPath = new ArrayList<Integer>(path);
+            getMins(grid, r, c+1, newMin, newPath);   
+        }
+        //GO DOWN
+        if(r+1 < grid.length) {
+        	System.out.println("Now Path2 is :" + path);
+            ArrayList<Integer> newPath = new ArrayList<Integer>(path);
+            getMins(grid, r+1, c, newMin, newPath);   
+        }
+      //if end found, save values.
+        if(r == grid.length-1 && c == grid[0].length-1) {
+            Wrapper.paths.add(path);
+            Wrapper.mins.add(min);
+            System.out.println(Wrapper.paths);
+            if(min > Wrapper.max) Wrapper.max = min;
+            return;
+        }
+    }
+}
