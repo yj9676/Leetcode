@@ -1,0 +1,34 @@
+public class Main {
+    
+	public static String mostCommonWord(String paragraph, String[] banned) {
+    if(paragraph.length()==0) return "";
+		paragraph = paragraph.replaceAll("[\\!?',;.]", " ").replace("  ", " ").toLowerCase();
+		String[] split = paragraph.split(" ");
+		Map<String, Integer> map = new HashMap<>();
+		Set<String> ban = new HashSet<>(Arrays.asList(banned));
+		int max = Integer.MIN_VALUE;
+		String mostW = "";
+		for (String word : split)
+		{
+			if (!ban.contains(word))
+			{
+				map.putIfAbsent(word, 0); // 如果传入key对应的value已经存在，就返回存在的value，不进行替换。如果不存在，就添加key和value，返回null
+				map.put(word, map.get(word) + 1);
+				if (map.get(word) > max)
+				{
+					max = map.get(word);
+					mostW = word;
+				}
+			}
+		}
+
+		return mostW;
+	}
+    
+    public static void main(String[] args) {
+    	String[] ban = new String[1] ;
+    	ban[0] = "hit";
+    	String common = mostCommonWord("Bob hit a ball, the hit BALL BALL far after it was hit.",ban);
+    	System.out.println(common);
+    }
+}
