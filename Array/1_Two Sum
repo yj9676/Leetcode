@@ -16,7 +16,10 @@ class Solution {
 
 class Solution {
     public int[] twoSum(int[] nums, int target) {
+    	if(nums.length == 0) return null;
         int[] res = new int[2];
+        res[0] = -1;
+        res[1] = -1;
         int max = Integer.MIN_VALUE;
         Map<Integer,Integer> map = new HashMap<>();
         for(int i=0; i<nums.length; i++){
@@ -30,6 +33,9 @@ class Solution {
             }
             map.put(nums[i],i);
         }
+        
+        if(res[0] == -1 && res[1] == -1) return null;
+        
         return res;
     }
 }
